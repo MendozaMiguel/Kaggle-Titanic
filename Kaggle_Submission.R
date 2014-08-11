@@ -2,37 +2,34 @@
 require(randomForest)
 
 #Load training/test set
-setwd("/Users/michaelpiccirilli/Desktop/Kaggle-Code")
-ttrain <- read.csv("train.csv",header=T,sep=",", stringsAsFactors = FALSE)
-ttest <- read.csv("test.csv",header=T,sep=",", stringsAsFactors = FALSE)
-sapply(ttrain,class)
+setwd("/Users/michaelpiccirilli/Documents/GitHub/Kaggle-Titanic")
+train <- read.csv("train.csv",header=T,sep=",", stringsAsFactors = FALSE)
+test <- read.csv("test.csv",header=T,sep=",", stringsAsFactors = FALSE)
+sapply(train,class)
 
 
 # Index the Sex
-ttrain$sex.index <- as.numeric(as.factor(ttrain$Sex))
-ttest$sex.index <- as.numeric(as.factor(ttest$Sex))
+train$sex.index <- as.numeric(as.factor(train$Sex))
+test$sex.index <- as.numeric(as.factor(test$Sex))
 
 
 # Remove NA from AGE column
 # Will need to replace later? 
-ttrain$Age[is.na(ttrain$Age)] <- 0
-ttest$Age[is.na(ttest$Age)] <- 0
+train$Age[is.na(train$Age)] <- 0
+test$Age[is.na(test$Age)] <- 0
 
 
 # Index and reclassify the embarked letters to numbers
-ttrain$embarked.index <- as.numeric(as.factor(ttrain$Embarked))
-ttest$embarked.index <- as.numeric(as.factor(ttest$Embarked))
+train$embarked.index <- as.numeric(as.factor(train$Embarked))
+test$embarked.index <- as.numeric(as.factor(test$Embarked))
 
 
+# Strip out the titles of each person:
+title <- grep("\\.",value=TRUE,train$Name)
+train$title <- grep("[[:alpha:]]{2,6}",value=TRUE,train$Name)
+head(train$title)
 
-
-head(ttrain$Name)
-
-title <- grep("\\.",value=TRUE,ttrain$Name)
-ttrain$title <- grep("[[:alpha:]]{2,6}",value=TRUE,ttrain$Name)
-head(ttrain$title)
-
-titleonly <- gsub("[[:alpha:]]+[[:punct:]]{1}.+",replacement="\\1",ttrain$Name[title])
+titleonly <- gsub("[[:alpha:]]+[[:punct:]]{1}.+",replacement="\\1",train$Name[title])
 titleonly <- data.frame(titleonly)
 head(titleonly)
 
@@ -47,9 +44,9 @@ testinfo <- as.data.frame(testinfo)
 
 
 
-mrtitle <- grep("Mr.",fixed=TRUE,ttrain$Name)
+mrtitle <- grep("Mr.",fixed=TRUE,train$Name)
 mrtitle <- as.data.frame(mrtitle)
-mrstitle <- grep("Mrs.",fixed=TRUE,ttrain$Name)
+mrstitle <- grep("Mrs.",fixed=TRUE,train$Name)
 mstitle <- grep("Miss.",fixed=TRUE,ttrain$Name)
 msttitle <- grep("Master.",fixed=TRUE,ttrain$Name)
 mmetitle <- grep("Mme.",fixed=TRUE,ttrain$Name)
